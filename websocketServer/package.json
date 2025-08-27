@@ -1,0 +1,18 @@
+{
+  "name": "websocketServer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc -b && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "@types/ws": "^8.18.1",
+    "redis": "^5.8.2",
+    "ws": "^8.18.3"
+  }
+}
