@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc -b && node dist/index.js"
+    "dev": "tsc -b && node dist/index.js",
+    "seed:db": "tsc -b && node dist/seed.js",
+    "cron": "tsc -b && node dist/cron.js",
+    "run:btcusdt": "tsc -b && node dist/process/btcusdt.js",
+    "run:ethusdt": "tsc -b && node dist/process/ethusdt.js",
+    "run:solusdt": "tsc -b && node dist/process/solusdt.js"
   },
   "keywords": [],
   "author": "",

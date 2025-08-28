@@ -61,6 +61,18 @@ function main() {
                         clients.set(socket, parsedData.symbol);
                         console.log(clients.get(socket));
                     }
+                    if (parsedData.type == "unsubscribe" && parsedData.symbol === "btcusdt_bid_ask") {
+                        clients.delete(socket);
+                        console.log(clients.get(socket));
+                    }
+                    else if (parsedData.type == "unsubscribe" && parsedData.symbol === "ethusdt_bid_ask") {
+                        clients.delete(socket);
+                        console.log(clients.get(socket));
+                    }
+                    else if (parsedData.type == "unsubscribe" && parsedData.symbol === "solusdt_bid_ask") {
+                        clients.delete(socket);
+                        console.log(clients.get(socket));
+                    }
                 });
             }));
         }

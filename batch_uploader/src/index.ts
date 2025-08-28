@@ -15,22 +15,32 @@ async function main() {
   console.log("client connected");
   const redis = await createClient().connect();
   console.log("redis connected");
-  const arr = [];
+
+  //TODO: add batch inserts
+  //  const arr = [];
 
   while (true) {
     let length = await redis.lLen("price");
     if (length >= 100) {
       const pop = await redis.rPop("price");
-      arr.push(pop);
+      if (!pop) {
+        return;
+      }
+      const parsedPop = JSON.parse(pop);
+
+      //TODO: add batch inserts
+      //     arr.push(pop);
+
+      const query = 'INSERT INTO tata_prices (time, price) VALUES ($1, $2)';
+      const values = [parsedPop.time, parsedPop.price];
+      await pgclient.query(query, values);
 
 
 
-
-    }
-    if (arr.length > 100) {
-      console.log(arr);
     }
   }
+
+
 
 }
 main();

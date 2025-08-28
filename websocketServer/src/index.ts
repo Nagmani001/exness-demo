@@ -59,7 +59,6 @@ async function main() {
         }
 
 
-
         if (parsedData.type == "unsubscribe" && parsedData.symbol === "btcusdt_bid_ask") {
           clients.delete(socket);
           console.log(clients.get(socket));
@@ -71,9 +70,6 @@ async function main() {
           clients.delete(socket);
           console.log(clients.get(socket));
         }
-
-
-
       })
     });
 

@@ -45,10 +45,11 @@ async function main() {
         };
         const dataToQueue = {
           price: message.p,
-          time: message.E
+          time: message.E,
+          volume: message.v
         }
         redis.publish("ethusdt_bid_ask", JSON.stringify(dataToPubsub));
-        redis.lPush("btcusdt_price", JSON.stringify(dataToQueue));
+        redis.lPush("ethusdt_price", JSON.stringify(dataToQueue));
 
       } else if (message.s == "SOLUSDT") {
         const bid = message.p - ((2 / 100) * message.p)

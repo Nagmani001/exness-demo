@@ -12,13 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const redis_1 = require("redis");
 const pg_1 = require("pg");
 const pgclient = new pg_1.Client({
-    user: 'your_user',
+    user: 'nagmani',
     host: 'localhost',
-    database: 'my_database',
-    password: 'your_password',
+    database: "postgres",
+    password: 'nagmani',
     port: 5432,
 });
-// pgclient.connect();
+pgclient.connect();
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("client connected");
@@ -27,18 +27,25 @@ function main() {
         //TODO: add batch inserts
         //  const arr = [];
         while (true) {
-            let length = yield redis.lLen("price");
-            if (length >= 100) {
-                const pop = yield redis.rPop("price");
+            let length = yield redis.lLen("btcusdt_price");
+            if (length >= 20) {
+                const pop = yield redis.rPop("btcusdt_price");
                 if (!pop) {
                     return;
                 }
                 const parsedPop = JSON.parse(pop);
                 //TODO: add batch inserts
                 //     arr.push(pop);
-                const query = 'INSERT INTO tata_prices (time, price) VALUES ($1, $2)';
-                const values = [parsedPop.time, parsedPop.price];
-                yield pgclient.query(query, values);
+                const query = 'INSERT INTO usdtbtc_prices (time, price) VALUES ($1, $2)';
+                const values = [new Date(parsedPop.time), parsedPop.price];
+                try {
+                    yield pgclient.query(query, values);
+                    console.log("pushed");
+                }
+                catch (err) {
+                    console.log("error occured");
+                    console.log(err);
+                }
             }
         }
     });
