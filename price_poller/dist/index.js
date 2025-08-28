@@ -32,10 +32,9 @@ function main() {
             ws.on("message", (data) => {
                 const message = JSON.parse(data);
                 if (message.E) {
-                    console.log(message);
                     const dataToSend = {
                         price: message.p,
-                        time: message.T
+                        time: new Date(message.T)
                     };
                     redis.lPush("price", JSON.stringify(dataToSend));
                 }

@@ -2,6 +2,7 @@ import WebSocket from "ws";
 
 import { createClient } from "redis";
 
+
 async function main() {
   try {
     const redis = await createClient().connect();
@@ -24,7 +25,7 @@ async function main() {
       if (message.E) {
         const dataToSend = {
           price: message.p,
-          time: message.T
+          time: new Date(message.T)
         }
         redis.lPush("price", JSON.stringify(dataToSend));
       } else {
@@ -33,7 +34,6 @@ async function main() {
 
         const exnessBid = bid + ((2.5 / 100) * bid);
         const exnessAsk = ask - ((2.5 / 100) * bid);
-
         const dataToSend = {
           exnessBid,
           exnessAsk
@@ -53,5 +53,9 @@ async function main() {
     console.log("connection to redis failed");
     console.log(err);
   }
+
 }
+
 main();
+
+
