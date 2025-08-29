@@ -1,4 +1,51 @@
+import axios from "axios";
 
+export const BASE_URL = "http://localhost:3000/api/v1";
+
+export async function generateData(interval: string, startTime: Number, endTime: Number, market: string) {
+
+  try {
+    const response = await axios.get(`${BASE_URL}/kline/?interval=${interval}&market=${market}&startTime=${startTime}&endTime=${endTime}`);
+    const newArr = response.data.map((x: any) => {
+      return {
+        open: x.open,
+        high: x.high,
+        low: x.low,
+        close: x.close,
+        time: new Date(x.time).getTime() / 1000
+      }
+    });
+    console.log("response", response.data);
+    return newArr
+
+    /*
+    const ws = new WebSocket("ws://localhost:8080");
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        type: "subscribe",
+        symbol: "btcusdt_bid_ask"
+      }));
+
+      ws.onmessage = (data: any) => {
+        const parsedData = JSON.parse(data);
+        console.log(parsedData);
+
+      }
+
+    }
+     */
+
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+
+
+
+
+/*
 let randomFactor = 25 + Math.random() * 25;
 const samplePoint = (i: any) =>
   i *
@@ -68,3 +115,5 @@ export function generateData(
     realtimeUpdates,
   };
 }
+ */
+

@@ -3,9 +3,7 @@ import { createChart, ColorType, CandlestickSeries } from "lightweight-charts";
 import { useEffect, useRef } from "react";
 import { generateData } from "../utils/lib";
 
-export default function Trades({ data }: {
-  data: any
-}) {
+export default function Trades() {
   const chartRef = useRef(null);
 
   const backgroundColor = "black";
@@ -21,6 +19,7 @@ export default function Trades({ data }: {
         return;
       }
       const handleResize = () => {
+        //@ts-ignore
         chart.applyOptions({ width: chartRef.current.clientWidth });
       };
       const chart = createChart(chartRef.current, {
@@ -33,14 +32,20 @@ export default function Trades({ data }: {
       });
       chart.timeScale().fitContent();
 
-      const candlestickSeries = chart.addSeries(CandlestickSeries, { upColor: '#26a69a', downColor: '#ef5350', borderVisible: false, wickUpColor: '#26a69a', wickDownColor: '#ef5350' });
-      const data1 = generateData(2500, 20, 1000);
-      candlestickSeries.setData(data1.initialData);
+      const main = async () => {
+        const candlestickSeries = chart.addSeries(CandlestickSeries, { upColor: '#26a69a', downColor: '#ef5350', borderVisible: false, wickUpColor: '#26a69a', wickDownColor: '#ef5350' });
 
-      window.addEventListener('resize', handleResize);
+        const data1 = await generateData("1m", 1756457851907, 1756458151907, "btc_usdt");
+        console.log(data1);
+        candlestickSeries.setData(data1);
+        window.addEventListener('resize', handleResize);
+      }
+      main();
 
 
 
+
+      /*
       function* getNextRealtimeUpdate(realtimeData: any) {
         for (const dataPoint of realtimeData) {
           yield dataPoint;
@@ -58,6 +63,7 @@ export default function Trades({ data }: {
         }
         candlestickSeries.update(update.value);
       }, 100);
+        */
 
 
       return () => {
@@ -66,7 +72,7 @@ export default function Trades({ data }: {
         chart.remove();
       };
     },
-    [data, backgroundColor, lineColor, textColor, areaTopColor, areaBottomColor]
+    [backgroundColor, lineColor, textColor, areaTopColor, areaBottomColor]
   );
 
 
