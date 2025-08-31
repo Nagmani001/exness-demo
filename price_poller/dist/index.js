@@ -18,6 +18,7 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const redis = yield (0, redis_1.createClient)().connect();
+            console.log("connected to redis");
             const ws = new ws_1.default("wss://stream.binance.com:9443/ws");
             ws.on("open", () => {
                 ws.send(JSON.stringify({
@@ -38,7 +39,8 @@ function main() {
                     const dataToPubsub = {
                         bid,
                         ask,
-                        symbol: message.s
+                        symbol: message.s,
+                        time: message.T,
                     };
                     const dataToQueue = {
                         price: message.p,
@@ -53,7 +55,8 @@ function main() {
                     const dataToPubsub = {
                         bid,
                         ask,
-                        symbol: message.s
+                        symbol: message.s,
+                        time: message.T,
                     };
                     const dataToQueue = {
                         price: message.p,
@@ -69,7 +72,8 @@ function main() {
                     const dataToPubsub = {
                         bid,
                         ask,
-                        symbol: message.s
+                        symbol: message.s,
+                        time: message.T,
                     };
                     const dataToQueue = {
                         price: message.p,

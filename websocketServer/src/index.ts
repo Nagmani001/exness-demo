@@ -14,6 +14,7 @@ async function main() {
 
     try {
       await redis.subscribe("btcusdt_bid_ask", (data) => {
+        console.log(data);
         clients.forEach((symbol, socket) => {
           if (symbol == "btcusdt_bid_ask") {
             socket.send(JSON.stringify(data));

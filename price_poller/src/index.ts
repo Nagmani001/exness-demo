@@ -5,6 +5,7 @@ import { createClient } from "redis";
 async function main() {
   try {
     const redis = await createClient().connect();
+    console.log("connected to redis");
 
     const ws = new WebSocket("wss://stream.binance.com:9443/ws");
 
@@ -27,7 +28,8 @@ async function main() {
         const dataToPubsub = {
           bid,
           ask,
-          symbol: message.s
+          symbol: message.s,
+          time: message.T,
         };
         const dataToQueue = {
           price: message.p,
@@ -41,7 +43,8 @@ async function main() {
         const dataToPubsub = {
           bid,
           ask,
-          symbol: message.s
+          symbol: message.s,
+          time: message.T,
         };
         const dataToQueue = {
           price: message.p,
@@ -57,7 +60,8 @@ async function main() {
         const dataToPubsub = {
           bid,
           ask,
-          symbol: message.s
+          symbol: message.s,
+          time: message.T,
         };
         const dataToQueue = {
           price: message.p,

@@ -1,7 +1,7 @@
 import { createChart, ColorType, CandlestickSeries } from "lightweight-charts";
-
 import { useEffect, useRef } from "react";
-import { generateData } from "../utils/lib";
+import { generateData, processRealUpdate } from "../utils/lib";
+import { SubscribtionManager } from "../utils/subscribtionManager";
 
 export default function Trades() {
   const chartRef = useRef(null);
@@ -34,45 +34,38 @@ export default function Trades() {
 
       const main = async () => {
         const candlestickSeries = chart.addSeries(CandlestickSeries, { upColor: '#26a69a', downColor: '#ef5350', borderVisible: false, wickUpColor: '#26a69a', wickDownColor: '#ef5350' });
-
-        const data1 = await generateData("1m", 1756457851907, 1756458151907, "btc_usdt");
+        const startTime = Date.now();
+        const endTime = startTime - 10 * 60 * 1000;
+        const data1 = await generateData("1m", endTime, startTime, "btc_usdt");
         console.log(data1);
         candlestickSeries.setData(data1);
         window.addEventListener('resize', handleResize);
       }
       main();
 
+      const subscribtionInstance = SubscribtionManager.getInstance();
 
-
-
-      /*
-      function* getNextRealtimeUpdate(realtimeData: any) {
-        for (const dataPoint of realtimeData) {
-          yield dataPoint;
+      subscribtionInstance.registerCallback("BTCUSDT", (trade: any) => {
+        console.log("hi there");
+        const candle = processRealUpdate(trade);
+        console.log("hi there");
+        console.log(candle);
+        if (candle) {
+          candlestickSeries.update(candle);
         }
-        return null;
-      }
+      });
 
-      const streamingDataProvider = getNextRealtimeUpdate(data1.realtimeUpdates);
-
-      const intervalID = setInterval(() => {
-        const update = streamingDataProvider.next();
-        if (update.done) {
-          clearInterval(intervalID);
-          return;
-        }
-        candlestickSeries.update(update.value);
-      }, 100);
-        */
-
+      subscribtionInstance.subscribe({ type: "subscribe", symbol: "btcusdt_bid_ask" });
 
       return () => {
         window.removeEventListener('resize', handleResize);
-
+        subscribtionInstance.deregisterCallback("BTCUSDT");
+        subscribtionInstance.subscribe({ type: "subscribe", symbol: "btcusdt_bid_ask" });
         chart.remove();
       };
     },
-    [backgroundColor, lineColor, textColor, areaTopColor, areaBottomColor]
+
+    [backgroundColor, lineColor, textColor, areaTopColor, areaBottomColor, chartRef]
   );
 
 
