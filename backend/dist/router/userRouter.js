@@ -9,6 +9,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const uuid_1 = require("uuid");
 const utils_1 = require("../config/utils");
 const zodTypes_1 = require("../types/zodTypes");
+const authMiddleware_1 = require("../middleware/authMiddleware");
 exports.userRouter = (0, express_1.Router)();
 exports.userRouter.post("/signup", (req, res) => {
     const parsedData = zodTypes_1.credentialsSchema.safeParse(req.body);
@@ -32,7 +33,7 @@ exports.userRouter.post("/signup", (req, res) => {
         email: parsedData.data.email,
         password: parsedData.data.password,
         balance: {
-            "USD": 50000000
+            "USD": 500000
         }
     });
     res.json({
@@ -61,5 +62,12 @@ exports.userRouter.post("/signin", (req, res) => {
     const token = jsonwebtoken_1.default.sign({ userId: user.id }, utils_1.JWT_SECRET);
     res.json({
         token,
+    });
+});
+exports.userRouter.get("/balance", authMiddleware_1.authorize, (req, res) => {
+    const userId = req.userId;
+    const user = utils_1.IN_MEMORY_USER.find(x => x.id == userId);
+    res.json({
+        usd_balance: user === null || user === void 0 ? void 0 : user.balance["USD"]
     });
 });

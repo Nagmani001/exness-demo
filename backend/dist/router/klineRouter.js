@@ -47,7 +47,8 @@ exports.klineRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
                     close: x.close,
                     high: x.high,
                     low: x.low,
-                    time: x.bucket
+                    time: x.bucket,
+                    decimal: 4
                 };
             }));
         }
@@ -78,7 +79,8 @@ exports.klineRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
                     close: x.close,
                     high: x.high,
                     low: x.low,
-                    time: x.bucket
+                    time: x.bucket,
+                    decimal: 4
                 };
             }));
         }
@@ -109,7 +111,8 @@ exports.klineRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
                     close: x.close,
                     high: x.high,
                     low: x.low,
-                    time: x.bucket
+                    time: x.bucket,
+                    decimal: 4
                 };
             }));
         }

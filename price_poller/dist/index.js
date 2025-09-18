@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ws_1 = __importDefault(require("ws"));
 const redis_1 = require("redis");
+const DECIMAL = 10000;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -34,49 +35,51 @@ function main() {
             ws.on("message", (data) => {
                 const message = JSON.parse(data);
                 if (message.s == "BTCUSDT") {
-                    const bid = message.p - ((2 / 100) * message.p);
-                    const ask = message.p;
+                    const realPrice = parseFloat(message.p);
+                    const buyPrice = Math.round(realPrice * DECIMAL + ((1 / 100) * realPrice * DECIMAL));
+                    const sellPrice = Math.round(realPrice * DECIMAL);
                     const dataToPubsub = {
-                        bid,
-                        ask,
+                        buyPrice,
+                        sellPrice,
                         symbol: message.s,
                         time: message.T,
                     };
                     const dataToQueue = {
-                        price: message.p,
+                        price: sellPrice,
                         time: message.E
                     };
                     redis.publish("btcusdt_bid_ask", JSON.stringify(dataToPubsub));
                     redis.lPush("btcusdt_price", JSON.stringify(dataToQueue));
                 }
                 else if (message.s == "ETHUSDT") {
-                    const bid = message.p - ((2 / 100) * message.p);
-                    const ask = message.p;
+                    const realPrice = parseFloat(message.p);
+                    const buyPrice = Math.round(realPrice * DECIMAL + ((1 / 100) * realPrice * DECIMAL));
+                    const sellPrice = Math.round(realPrice * DECIMAL);
                     const dataToPubsub = {
-                        bid,
-                        ask,
+                        buyPrice,
+                        sellPrice,
                         symbol: message.s,
                         time: message.T,
                     };
                     const dataToQueue = {
-                        price: message.p,
-                        time: message.E,
-                        volume: message.v
+                        price: sellPrice,
+                        time: message.E
                     };
                     redis.publish("ethusdt_bid_ask", JSON.stringify(dataToPubsub));
                     redis.lPush("ethusdt_price", JSON.stringify(dataToQueue));
                 }
                 else if (message.s == "SOLUSDT") {
-                    const bid = message.p - ((2 / 100) * message.p);
-                    const ask = message.p;
+                    const realPrice = parseFloat(message.p);
+                    const buyPrice = Math.round(realPrice * DECIMAL + ((1 / 100) * realPrice * DECIMAL));
+                    const sellPrice = Math.round(realPrice * DECIMAL);
                     const dataToPubsub = {
-                        bid,
-                        ask,
+                        buyPrice,
+                        sellPrice,
                         symbol: message.s,
                         time: message.T,
                     };
                     const dataToQueue = {
-                        price: message.p,
+                        price: sellPrice,
                         time: message.E
                     };
                     redis.publish("solusdt_bid_ask", JSON.stringify(dataToPubsub));

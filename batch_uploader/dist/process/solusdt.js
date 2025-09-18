@@ -18,36 +18,44 @@ const pgclient = new pg_1.Client({
     password: 'nagmani',
     port: 5432,
 });
-pgclient.connect();
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
+        yield pgclient.connect();
         console.log("client connected");
         const redis = yield (0, redis_1.createClient)().connect();
         console.log("redis connected");
-        //TODO: add batch inserts
-        //  const arr = [];
-        while (true) {
-            let length = yield redis.lLen("solusdt_price");
-            if (length >= 20) {
-                const pop = yield redis.rPop("solusdt_price");
-                if (!pop) {
-                    return;
+        setInterval(() => __awaiter(this, void 0, void 0, function* () {
+            const pop = yield redis.lRange("solusdt_price", 0, -1);
+            redis.del("solusdt_price");
+            let query = `
+      INSERT INTO usdtsol_prices
+        (time, price)
+      VALUES`;
+            let temp = 0;
+            pop.forEach((_, i) => {
+                if (i == pop.length - 1) {
+                    query += ` ($${i + 1 + temp},$${i + 2 + temp})`;
+                    temp++;
                 }
-                const parsedPop = JSON.parse(pop);
-                //TODO: add batch inserts
-                //     arr.push(pop);
-                const query = 'INSERT INTO usdtsol_prices (time, price) VALUES ($1, $2)';
-                const values = [new Date(parsedPop.time), parsedPop.price];
-                try {
-                    yield pgclient.query(query, values);
-                    console.log("pushed");
+                else {
+                    query += ` ($${i + 1 + temp},$${i + 2 + temp}),`;
+                    temp++;
                 }
-                catch (err) {
-                    console.log("error occured");
-                    console.log(err);
-                }
+            });
+            const values = [];
+            pop.forEach((x) => {
+                const parsedData = JSON.parse(x);
+                values.push(new Date(parsedData.time), parsedData.price);
+            });
+            try {
+                yield pgclient.query(query, values);
+                console.log("success");
             }
-        }
+            catch (err) {
+                console.log(err);
+                console.log("error occured");
+            }
+        }), 5000);
     });
 }
 main();

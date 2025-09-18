@@ -14,7 +14,6 @@ async function main() {
 
     try {
       await redis.subscribe("btcusdt_bid_ask", (data) => {
-        console.log(data);
         clients.forEach((symbol, socket) => {
           if (symbol == "btcusdt_bid_ask") {
             socket.send(JSON.stringify(data));
@@ -31,6 +30,7 @@ async function main() {
       });
 
       await redis.subscribe("solusdt_bid_ask", (data) => {
+
         clients.forEach((symbol, socket) => {
           if (symbol == "solusdt_bid_ask") {
             socket.send(JSON.stringify(data));
@@ -49,27 +49,21 @@ async function main() {
         const parsedData = JSON.parse(data);
         if (parsedData.type == "subscribe" && parsedData.symbol === "btcusdt_bid_ask") {
           clients.set(socket, parsedData.symbol);
-          console.log(clients.get(socket));
         } else if (parsedData.type == "subscribe" && parsedData.symbol === "ethusdt_bid_ask") {
           clients.set(socket, parsedData.symbol);
-          console.log(clients.get(socket));
         }
         else if (parsedData.type == "subscribe" && parsedData.symbol === "solusdt_bid_ask") {
           clients.set(socket, parsedData.symbol);
-          console.log(clients.get(socket));
         }
 
 
         if (parsedData.type == "unsubscribe" && parsedData.symbol === "btcusdt_bid_ask") {
           clients.delete(socket);
-          console.log(clients.get(socket));
         } else if (parsedData.type == "unsubscribe" && parsedData.symbol === "ethusdt_bid_ask") {
           clients.delete(socket);
-          console.log(clients.get(socket));
         }
         else if (parsedData.type == "unsubscribe" && parsedData.symbol === "solusdt_bid_ask") {
           clients.delete(socket);
-          console.log(clients.get(socket));
         }
       })
     });

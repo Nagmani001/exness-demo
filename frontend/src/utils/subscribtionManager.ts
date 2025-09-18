@@ -14,7 +14,6 @@ export class SubscribtionManager {
   }
 
   private init() {
-    this.initialized = false;
     this.ws.onopen = () => {
       this.initialized = true;
       this.bufferedMessage.map(x => {
@@ -25,11 +24,10 @@ export class SubscribtionManager {
 
     this.ws.onmessage = (data: any) => {
       const parsedData = JSON.parse(data.data);
-      if (this.callbacks[parsedData.type]) {
-        this.callbacks[parsedData.type].map((callback: any) => {
-          callback(parsedData);
-        })
-      }
+      const newParse = JSON.parse(parsedData);
+      this.callbacks[newParse.symbol].map((callback: any) => {
+        callback(newParse);
+      })
     }
   }
 
@@ -57,5 +55,8 @@ export class SubscribtionManager {
       this.bufferedMessage.push(message);
     }
     this.ws.send(JSON.stringify(message));
+  }
+  public closeConnection() {
+    this.ws.close();
   }
 }

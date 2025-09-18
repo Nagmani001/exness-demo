@@ -5,6 +5,9 @@ import { userRouter } from "./router/userRouter";
 import { klineRouter } from "./router/klineRouter";
 import { orderRouter } from "./router/orderRouter";
 import { authorize } from "./middleware/authMiddleware";
+import { orderWithLeverage } from "./router/orderWithLeverage";
+import { assetRouter } from "./router/assetRouter";
+import { executeOrderRouter } from "./router/executeOrderRouter";
 
 declare global {
   namespace Express {
@@ -15,17 +18,22 @@ declare global {
 }
 const app = express();
 
-export const latestPrice: Record<string, { bid: number, ask: number }> = {};
+export const latestPrice: Record<string, { buyPrice: number, sellPrice: number }> = {};
 
-// {"bid":106519.5712,"ask":"108693.44000000","symbol":"BTCUSDT","time":1756625307507}
 
 app.use(express.json());
 app.use(cors());
 
-app.use("/api/v1/user", userRouter);
-app.use("/api/v1/trade", authorize, orderRouter);
 
+app.use("/api/v1/assets", assetRouter);
+app.use("/api/v1/user", userRouter);
 app.use("/api/v1/kline", klineRouter);
+
+
+app.use("/api/v1/trade", authorize, orderRouter);
+app.use("/api/v1/trade/leverage", authorize, orderWithLeverage);
+app.use("/api/v1/executeOrder", executeOrderRouter);
+
 
 
 
@@ -37,9 +45,19 @@ async function main() {
   });
 
   const redis = await createClient().connect();
-  redis.subscribe("price", (data) => {
+  redis.subscribe("btcusdt_bid_ask", (data) => {
     const parsedDatat = JSON.parse(data);
-    latestPrice[parsedDatat.symbol] = { bid: parsedDatat.bid, ask: parsedDatat.ask };
+    latestPrice[parsedDatat.symbol] = { buyPrice: parsedDatat.buyPrice, sellPrice: parsedDatat.sellPrice };
+  });
+
+  redis.subscribe("ethusdt_bid_ask", (data) => {
+    const parsedDatat = JSON.parse(data);
+    latestPrice[parsedDatat.symbol] = { buyPrice: parsedDatat.buyPrice, sellPrice: parsedDatat.sellPrice };
+  });
+
+  redis.subscribe("solusdt_bid_ask", (data) => {
+    const parsedDatat = JSON.parse(data);
+    latestPrice[parsedDatat.symbol] = { buyPrice: parsedDatat.buyPrice, sellPrice: parsedDatat.sellPrice };
   });
 }
 

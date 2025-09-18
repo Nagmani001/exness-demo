@@ -1,9 +1,6 @@
 import { Router, Request, Response } from "express";
 
-
 export const orderWithLeverage = Router();
-
-
 
 orderWithLeverage.post("/", (req: Request, res: Response) => {
 

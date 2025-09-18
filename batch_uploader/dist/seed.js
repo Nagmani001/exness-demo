@@ -24,8 +24,8 @@ function initializeDB() {
         DROP TABLE IF EXISTS "usdtbtc_prices";
         CREATE TABLE "usdtbtc_prices"(
             time            TIMESTAMP WITH TIME ZONE NOT NULL,
-            price   DOUBLE PRECISION,
-            volume      DOUBLE PRECISION,
+            price      BIGINT,
+            volume      BIGINT,
             currency_code   VARCHAR (10)
         );
         
@@ -75,8 +75,8 @@ function initializeDB() {
         DROP TABLE IF EXISTS "usdteth_prices";
         CREATE TABLE "usdteth_prices"(
             time            TIMESTAMP WITH TIME ZONE NOT NULL,
-            price   DOUBLE PRECISION,
-            volume      DOUBLE PRECISION,
+            price      BIGINT,
+            volume      BIGINT,
             currency_code   VARCHAR (10)
         );
         
@@ -126,8 +126,8 @@ function initializeDB() {
         DROP TABLE IF EXISTS "usdtsol_prices";
         CREATE TABLE "usdtsol_prices"(
             time            TIMESTAMP WITH TIME ZONE NOT NULL,
-            price   DOUBLE PRECISION,
-            volume      DOUBLE PRECISION,
+            price      BIGINT,
+            volume      BIGINT,
             currency_code   VARCHAR (10)
         );
         

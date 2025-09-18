@@ -11,6 +11,7 @@ const pgClient = new Client({
 pgClient.connect();
 
 async function main() {
+
   await pgClient.query('REFRESH MATERIALIZED VIEW btc_klines_1m');
   await pgClient.query('REFRESH MATERIALIZED VIEW btc_klines_1h');
   await pgClient.query('REFRESH MATERIALIZED VIEW btc_klines_1w');
@@ -18,7 +19,6 @@ async function main() {
   await pgClient.query('REFRESH MATERIALIZED VIEW eth_klines_1m');
   await pgClient.query('REFRESH MATERIALIZED VIEW eth_klines_1h');
   await pgClient.query('REFRESH MATERIALIZED VIEW eth_klines_1w');
-
 
   await pgClient.query('REFRESH MATERIALIZED VIEW sol_klines_1m');
   await pgClient.query('REFRESH MATERIALIZED VIEW sol_klines_1h');

@@ -10,38 +10,51 @@ const pgclient = new Client({
   password: 'nagmani',
   port: 5432,
 });
-pgclient.connect();
 
 async function main() {
+  await pgclient.connect();
   console.log("client connected");
   const redis = await createClient().connect();
   console.log("redis connected");
 
-  //TODO: add batch inserts
-  //  const arr = [];
 
-  while (true) {
-    let length = await redis.lLen("solusdt_price");
-    if (length >= 20) {
-      const pop = await redis.rPop("solusdt_price");
-      if (!pop) {
-        return;
+  setInterval(async () => {
+    const pop = await redis.lRange("solusdt_price", 0, -1);
+    redis.del("solusdt_price");
+
+    let query = `
+      INSERT INTO usdtsol_prices
+        (time, price)
+      VALUES`;
+
+    let temp = 0;
+
+    pop.forEach((_, i: any) => {
+      if (i == pop.length - 1) {
+        query += ` ($${i + 1 + temp},$${i + 2 + temp})`
+        temp++;
+      } else {
+        query += ` ($${i + 1 + temp},$${i + 2 + temp}),`
+        temp++;
       }
-      const parsedPop = JSON.parse(pop);
+    });
 
-      //TODO: add batch inserts
-      //     arr.push(pop);
+    const values: any = [];
 
-      const query = 'INSERT INTO usdtsol_prices (time, price) VALUES ($1, $2)';
-      const values = [new Date(parsedPop.time), parsedPop.price];
-      try {
-        await pgclient.query(query, values);
-        console.log("pushed");
-      } catch (err) {
-        console.log("error occured");
-        console.log(err);
-      }
+    pop.forEach((x: any) => {
+      const parsedData = JSON.parse(x);
+      values.push(new Date(parsedData.time), parsedData.price);
+    });
+
+    try {
+      await pgclient.query(query, values);
+      console.log("success");
+    } catch (err) {
+      console.log(err);
+      console.log("error occured");
     }
-  }
+
+  }, 5000);
+
 }
 main();

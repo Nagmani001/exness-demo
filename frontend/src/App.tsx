@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Landing from "./pages/landing";
 import Signup from "./pages/signup";
 import Signin from "./pages/signin";
-import Trades from "./pages/trades";
+import Trade from "./pages/trades";
 
 export default function App() {
 
@@ -13,7 +13,7 @@ export default function App() {
         <Route element={<Landing />} path="/" />
         <Route element={<Signup />} path="/signup" />
         <Route element={<Signin />} path="/signin" />
-        <Route element={<Trades />} path="/trading" />
+        <Route element={<Trade />} path="/trading" />
       </Routes>
     </BrowserRouter>
 

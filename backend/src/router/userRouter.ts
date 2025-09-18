@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from 'uuid';
 import { IN_MEMORY_USER, JWT_SECRET } from "../config/utils";
 import { credentialsSchema } from "../types/zodTypes";
+import { authorize } from "../middleware/authMiddleware";
 
 export const userRouter = Router();
 
@@ -30,7 +31,7 @@ userRouter.post("/signup", (req: Request, res: Response) => {
     email: parsedData.data.email,
     password: parsedData.data.password,
     balance: {
-      "USD": 50000000
+      "USD": 500000
     }
   });
   res.json({
@@ -63,5 +64,13 @@ userRouter.post("/signin", (req: Request, res: Response) => {
   const token = jwt.sign({ userId: user.id }, JWT_SECRET);
   res.json({
     token,
+  });
+});
+
+userRouter.get("/balance", authorize, (req: Request, res: Response) => {
+  const userId = req.userId;
+  const user = IN_MEMORY_USER.find(x => x.id == userId);
+  res.json({
+    usd_balance: user?.balance["USD"]
   });
 });

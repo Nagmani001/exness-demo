@@ -42,7 +42,8 @@ klineRouter.get("/", async (req: Request, res: Response) => {
           close: x.close,
           high: x.high,
           low: x.low,
-          time: x.bucket
+          time: x.bucket,
+          decimal: 4
         }
       }));
     } catch (err) {
@@ -74,7 +75,8 @@ klineRouter.get("/", async (req: Request, res: Response) => {
           close: x.close,
           high: x.high,
           low: x.low,
-          time: x.bucket
+          time: x.bucket,
+          decimal: 4
         }
       }));
     } catch (err) {
@@ -105,7 +107,8 @@ klineRouter.get("/", async (req: Request, res: Response) => {
           close: x.close,
           high: x.high,
           low: x.low,
-          time: x.bucket
+          time: x.bucket,
+          decimal: 4
         }
       }));
     } catch (err) {
